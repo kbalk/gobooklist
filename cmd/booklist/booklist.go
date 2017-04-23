@@ -1,11 +1,11 @@
-// Package go_booklist lists specific author publications in the current year.
+// Main package for booklist; lists author publications in current year.
 //
 // Automates the search of a public library website to retrieve publications
 // for a configured list of authors.
 //
-// Takes a YAML file with the library's catalog URL and list of authors and
-// issues the appropriate requests to that library's website for the latest
-// publications for those authors.  Currently only works for libraries using
+// Takes a YAML file with the library's catalog URL and list of authors as
+// input.  Issues the appropriate requests to that library's website for the
+// latest publications for those authors.  Only works for libraries using
 // the CARL.X Integrated Library System (ILS).
 //
 // The CARL.X ILS is based on Web 2.0 technologies so its possible to issue
@@ -13,8 +13,8 @@
 // and the list of those publications.  It has an "open" API, but that API
 // appears to be open only to paying customers, i.e., the library staff.
 //
-// A request URL for CARL.X to search for a given book consists of an array
-// of facetFilters.  You can filter on format (media type), publication year,
+// A request URL to search for a given book consists of an array of
+// facetFilters.  You can filter on format (media type), publication year,
 // new titles, etc.  The 'New Titles' filter permits final granularity in
 // time, e.g., weeks or months.  However, if you go to a library website
 // using CARL.X and manually select a format filter, the 'New Titles' filter
@@ -24,7 +24,7 @@
 // This tool defaults to a search within a publication year and that year is
 // the current one.  Media with an unknown publication time period will also
 // be returned from a search as they are future releases that might be
-// available in the coming year.
+// available in the current year.
 //
 // Usage: go_booklist [-h] [-d] config_file
 //     Search a public library's catalog website for this year's publications
@@ -46,9 +46,10 @@ import (
 	"github.com/op/go-logging"
 )
 
-// initLogging initialize the format and debug level for the log to stderr.
+// initLogging initializes the format and debug level for the log to stderr.
 func initLogging(debug bool) {
 	stderrLog := logging.NewLogBackend(os.Stderr, "", 0)
+
 	format := logging.MustStringFormatter(
 		`%{time:15:04:05} %{level:.5s} %{message}`)
 	logFormatter := logging.NewBackendFormatter(stderrLog, format)
@@ -65,8 +66,6 @@ func initLogging(debug bool) {
 
 // main processes command line args then retrieve search results from library.
 func main() {
-
-	// Validate the command line argument and flags.
 	flag.Usage = func() {
 		fmt.Fprintf(os.Stderr,
 			"Usage: go_booklist: [-h] [-d] config_file\n")
@@ -81,7 +80,7 @@ func main() {
 		"Print debug information to stdout")
 	flag.Parse()
 
-	// Verify that only one argument was supplied, that argument being
+	// Verify that only one argument is supplied, that argument being
 	// the configuration file.
 	if flag.NArg() != 1 {
 		fmt.Fprintf(os.Stderr,
@@ -91,7 +90,7 @@ func main() {
 	}
 	configFileName := flag.Arg(0)
 
-	// Use logging for error and/or debug messages to stdout.
+	// Initialize logging for error and/or debug messages to stdout.
 	var log = logging.MustGetLogger("booklist")
 	initLogging(*debugFlag)
 

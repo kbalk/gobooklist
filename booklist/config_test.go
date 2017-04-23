@@ -287,6 +287,10 @@ func TestMediaTypeTransformation(t *testing.T) {
 			t.Errorf("Expected conversion of media type '%s' to "+
 				"yield '%s'", mediaType, filterType)
 		}
+		if config.Authors[0].Media != filterType {
+			t.Errorf("Expected conversion of author's media type "+
+                                "'%s' to yield '%s'", mediaType, filterType)
+		}
 	}
 }
 

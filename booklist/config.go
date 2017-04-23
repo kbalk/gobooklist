@@ -1,19 +1,15 @@
 /*
 Contains Configurator and ConfigError classes
 
-The Configurator class reads and validates the configuration file.  The
-configuration file contains:
+This file contains the functions to read and validate the configuration file.
+The configuration file contains:
 
     - URL for the library's catalog website,
     - optional default for desired media type ('Book' is assumed otherwise),
     - list of authors; each entry in the list must contain the author's first
       and last name, and optionally the desired media type for that author.
 
-The ConfigError class is used to report errors found in the configuration
-file.
-
-This particular implementation expects a config file in YAML format.  The
-tags are as follows:
+The config file is expected to be in YAML format.  The tags are as follows:
 
     catalog-url:
 	Required.  Must be a valid URL for a website using the CARL.X
@@ -82,14 +78,14 @@ type Config struct {
 	Authors []AuthorInfo `yaml:"authors,flow"`
 }
 
-// AuthorInfo provides the sub fields for the Authors field.
+// AuthorInfo provides the sub fields for the Authors field for Config.
 type AuthorInfo struct {
 	Firstname string
 	Lastname  string
 	Media     string `yaml:"media-type,omitempty"`
 }
 
-// schema is the schema for the YAML configuration file.
+// schema is the YAML configuration file schema.
 var schema = `
 {
         "$schema": "http://json-schema.org/draft-04/schema#",
@@ -116,13 +112,13 @@ var schema = `
 
 // MediaTypes - array of supported media types.
 //
-// The following list contains most of the supported media types
+// The following map contains most of the supported media types
 // allowed by the CARL-X ILS.  This is a map with a media type config name
 // as a key and the equivalent name for use in the URL query string as the
 // value.
 //
 // Note:  when validating the media type name found in the config file,
-// the name will first be converted to lower case before comparing it
+// the name must first be converted to lower case before comparing it
 // against this list.
 var MediaTypes = map[string]string{
 	"book":                "Book",
@@ -139,7 +135,7 @@ var MediaTypes = map[string]string{
 // mediaFormatChecker specifies a custom format type, 'media' to gojsonschema.
 type mediaFormatChecker struct{}
 
-// IsFormat provides the logic to validate the custom format type of 'media'.
+// IsFormat validates the custom format of 'media' in the schema.
 func (f mediaFormatChecker) IsFormat(input string) bool {
 	if input == "" {
 		return true
@@ -149,7 +145,6 @@ func (f mediaFormatChecker) IsFormat(input string) bool {
 }
 
 // convertMediaType converts media type fields to values needed by URL request.
-//
 // Note:  this assumes the config file has already been validated.
 func convertMediaType(config *Config) {
 	if config.Media != "" {
@@ -163,7 +158,7 @@ func convertMediaType(config *Config) {
 	}
 }
 
-// ReadConfig return contents of file into a byte slice if readable file exists.
+// ReadConfig return contents of file into a byte slice.
 func ReadConfig(configFileName string) ([]byte, error) {
 	path, err := filepath.Abs(configFileName)
 	if err != nil {
@@ -191,17 +186,15 @@ func ValidateConfig(in []byte) (Config, error) {
 		return config, fmt.Errorf("configuration content is empty")
 	}
 
-	// Marshal the contents of the YAML into the Go structure, 'config'.
+	// Marshal the contents of the YAML into the Go structure, 'Config'.
 	err := yaml.Unmarshal(in, &config)
 	if err != nil {
 		return config,
 			fmt.Errorf("unable to parse YAML config file:  %s", err)
 	}
-	//TBD
-	fmt.Println(config)
 
 	// To prepare for validation, load the config structure, add the
-	// media format checker to the schema, then load the schema.
+	// custom media format checker to the schema, then load the schema.
 	structLoader := gojsonschema.NewGoLoader(config)
 
 	gojsonschema.FormatCheckers.Add("media", mediaFormatChecker{})
@@ -227,7 +220,8 @@ func ValidateConfig(in []byte) (Config, error) {
 			strings.Join(errmsg[:], "\n"))
 	}
 
-	// Transform the media types to the values needed for the URL request.
+	// Transform the media types in the Config struct to values needed
+        // for the URL request.
 	convertMediaType(&config)
 
 	return config, err
