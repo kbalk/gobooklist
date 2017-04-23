@@ -1,8 +1,5 @@
 
-<header>
-WARNING -- this is a work in progress; the code is not complete
-===============================================================
-</header>
+*WARNING -- this is a work in progress; the code is not complete*
 
 # booklist
 
