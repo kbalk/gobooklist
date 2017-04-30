@@ -34,7 +34,7 @@
 //       config_file  Config file containing catalog url and list of authors
 //     optional arguments:
 //       -h, --help   show this help message and exit
-//       -d, --debug  Print debug information to stdout
+//       -d, --debug  Print debug information to stderr
 package main
 
 import (
@@ -46,7 +46,7 @@ import (
 	"github.com/op/go-logging"
 )
 
-// initLogging initializes the format and debug level for the log to stderr.
+// initLogging initializes the format and debug level for the stderr logging.
 func initLogging(debug bool) {
 	stderrLog := logging.NewLogBackend(os.Stderr, "", 0)
 
@@ -67,17 +67,18 @@ func initLogging(debug bool) {
 // main processes command line args then retrieve search results from library.
 func main() {
 	flag.Usage = func() {
-		fmt.Fprintf(os.Stderr,
-			"Usage: go_booklist: [-h] [-d] config_file\n")
-		fmt.Fprintln(os.Stderr, "  Search a public library's "+
-			"catalog website for this year's publications\n"+
-			"  from authors listed in the given config file.\n")
-		fmt.Fprintf(os.Stderr, "  config_file\n\tConfig file with "+
-			"library's catalog url and list of authors\n")
+                usageText := `Usage: go_booklist: [-h] [-d] config_file
+
+  Search a public library's catalog website for this year's publications
+  from authors listed in the given config file.
+
+  config_file
+        Config file with library's catalog url and list of authors`
+		fmt.Fprintln(os.Stderr, usageText)
 		flag.PrintDefaults()
 	}
 	var debugFlag = flag.Bool("debug", false,
-		"Print debug information to stdout")
+		"Print debug information to stderr")
 	flag.Parse()
 
 	// Verify that only one argument is supplied, that argument being
@@ -90,7 +91,7 @@ func main() {
 	}
 	configFileName := flag.Arg(0)
 
-	// Initialize logging for error and/or debug messages to stdout.
+	// Initialize logging for error and/or debug messages to stderr.
 	var log = logging.MustGetLogger("booklist")
 	initLogging(*debugFlag)
 
