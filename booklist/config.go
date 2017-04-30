@@ -221,7 +221,7 @@ func ValidateConfig(in []byte) (Config, error) {
 	}
 
 	// Transform the media types in the Config struct to values needed
-        // for the URL request.
+	// for the URL request.
 	convertMediaType(&config)
 
 	return config, err

@@ -105,6 +105,19 @@ func TestEmptyConfig(t *testing.T) {
 	}
 }
 
+func TestFileAsDir(t *testing.T) {
+	t.Log("attempt to read a directory instead of a config file")
+
+	_, ok := ReadConfig(".")
+	if ok == nil {
+		t.Error("Config file cannot be a directory; must be a file.")
+	}
+	if !strings.Contains(ok.Error(), "must be a file") {
+		t.Errorf("Expected error message to contain must be a file'; "+
+			"got: %s.", ok)
+	}
+}
+
 func TestBadYamlFormat(t *testing.T) {
 	t.Log("non-YAML file as input")
 	var ok error
@@ -289,7 +302,7 @@ func TestMediaTypeTransformation(t *testing.T) {
 		}
 		if config.Authors[0].Media != filterType {
 			t.Errorf("Expected conversion of author's media type "+
-                                "'%s' to yield '%s'", mediaType, filterType)
+				"'%s' to yield '%s'", mediaType, filterType)
 		}
 	}
 }
@@ -340,5 +353,32 @@ func TestInvalidAuthorNames(t *testing.T) {
 			t.Errorf("Expected error message to contain 'Author; "+
 				"got: %s.", ok)
 		}
+	}
+}
+
+func TestConfigStringer(t *testing.T) {
+	t.Log("test config stringer function.")
+	const configString = `
+        catalog-url: https://catalog.library.loudoun.gov/
+        media-type: Book
+        authors:
+            - firstname: Sue
+              lastname:  Grafton
+              media-type: eBook
+
+            - firstname: Stephan
+              lastname:  King
+        `
+	config, _ := ValidateConfig([]byte(configString))
+	configStr := fmt.Sprintf("%s", config)
+
+	const expectedStr = `https://catalog.library.loudoun.gov/
+Book
+   Sue Grafton; eBook
+   Stephan King
+`
+	if configStr != expectedStr {
+		t.Errorf("Expected config stringer to produce:%s\ngot\n%s",
+			expectedStr, configStr)
 	}
 }

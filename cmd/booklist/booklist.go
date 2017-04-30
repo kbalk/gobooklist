@@ -67,7 +67,7 @@ func initLogging(debug bool) {
 // main processes command line args then retrieve search results from library.
 func main() {
 	flag.Usage = func() {
-                usageText := `Usage: go_booklist: [-h] [-d] config_file
+		usageText := `Usage: go_booklist: [-h] [-d] config_file
 
   Search a public library's catalog website for this year's publications
   from authors listed in the given config file.
