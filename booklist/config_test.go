@@ -186,10 +186,13 @@ func TestQuotedText(t *testing.T) {
 
 func TestInvalidURLs(t *testing.T) {
 	t.Log("Tests of various invalid or missing URLs.")
-	invalidURLs := []string{
-		"",
-		"        catalog-url: badurl",
-		"        catalog-url: catalog.library.loudoun.gov",
+	testCases := []struct {
+		description string
+		url         string
+	}{
+		{"null url", ""},
+		{"single word url", "        catalog-url: badurl"},
+		{"no domain in url", "        catalog-url: catalog.library.loudoun.gov"},
 	}
 
 	configString := `
@@ -199,16 +202,18 @@ func TestInvalidURLs(t *testing.T) {
              lastname: Grafton
         `
 
-	for _, str := range invalidURLs {
-		_, ok := ValidateConfig([]byte(str + configString))
-		if ok == nil {
-			t.Errorf("Schema validation of config file should " +
-				"fail due to bad URL.")
-		}
-		if !strings.Contains(ok.Error(), "uri") {
-			t.Errorf("Expected error message to contain 'uri'; "+
-				"got: %s.", ok)
-		}
+	for _, tc := range testCases {
+		t.Run(tc.description, func(t *testing.T) {
+			_, ok := ValidateConfig([]byte(tc.url + configString))
+			if ok == nil {
+				t.Errorf("Schema validation of config file should " +
+					"fail due to bad URL.")
+			}
+			if !strings.Contains(ok.Error(), "uri") {
+				t.Errorf("Expected error message to contain 'uri' "+
+					"for url of %s; got: %s.", tc.url, ok)
+			}
+		})
 	}
 }
 
@@ -327,10 +332,13 @@ func TestNoAuthors(t *testing.T) {
 
 func TestInvalidAuthorNames(t *testing.T) {
 	t.Log("Tests of various invalid author names.")
-	invalidNames := []string{
-		"",
-		"lastname: Grafton",
-		"firstname: Sue",
+	testCases := []struct {
+		description string
+		name        string
+	}{
+		{"no first or last name", ""},
+		{"no last name", "lastname: Grafton"},
+		{"no first name", "firstname: Sue"},
 	}
 
 	const configString = `
@@ -343,16 +351,18 @@ func TestInvalidAuthorNames(t *testing.T) {
             lastname: King
         `
 
-	for _, str := range invalidNames {
-		_, ok := ValidateConfig([]byte(fmt.Sprintf(configString, str)))
-		if ok == nil {
-			t.Errorf("Schema validation of config file should " +
-				"fail due to author list.")
-		}
-		if !strings.Contains(ok.Error(), "Author") {
-			t.Errorf("Expected error message to contain 'Author; "+
-				"got: %s.", ok)
-		}
+	for _, tc := range testCases {
+		t.Run(tc.description, func(t *testing.T) {
+			_, ok := ValidateConfig([]byte(fmt.Sprintf(configString, tc.name)))
+			if ok == nil {
+				t.Errorf("Schema validation of config file should " +
+					"fail due to author list.")
+			}
+			if !strings.Contains(ok.Error(), "Author") {
+				t.Errorf("Expected error message to contain 'Author; "+
+					"for bad name of '%s'; got: %s.", tc.name, ok)
+			}
+		})
 	}
 }
 
