@@ -54,14 +54,67 @@ func initLogging(debug bool) {
 		`%{time:15:04:05} %{level:.5s} %{message}`)
 	logFormatter := logging.NewBackendFormatter(stderrLog, format)
 
-	logLevel := logging.AddModuleLevel(stderrLog)
+	logLevel := logging.AddModuleLevel(logFormatter)
 	level := logging.ERROR
 	if debug {
 		level = logging.DEBUG
 	}
 	logLevel.SetLevel(level, "")
 
-	logging.SetBackend(logFormatter)
+	logging.SetBackend(logLevel)
+}
+
+// Retrieve and print the author publications for current year.
+func printSearchResults(config booklist.Config, log *logging.Logger) error {
+	// The default type is the value specified in the config file or
+	// if not found, the standard default type.
+	defaultMedia := booklist.DefaultMediaType
+	if config.Media == "" {
+		defaultMedia = config.Media
+	}
+
+	for _, authorInfo := range config.Authors {
+		authorName := fmt.Sprintf("%s, %s",
+			authorInfo.Lastname, authorInfo.Firstname)
+
+		media := defaultMedia
+		if authorInfo.Media != "" {
+			media = authorInfo.Media
+		}
+
+		fmt.Printf("%s -- %ss:\n", authorName, media)
+		c := booklist.CatalogInfo{
+			URL:    config.URL,
+			Author: authorName,
+			Media:  media,
+			Log:    log,
+		}
+		results, err := c.PublicationSearch()
+		if err != nil {
+			return err
+		}
+		if results == nil {
+			continue
+		}
+
+		// Print the search results; each entry in the results list
+		// is a tuple containing the media type and publication name
+		// (e.g., book title).  Since some media types are supersets
+		// of other media types, it seemed useful to provide that
+		// extra information.
+		maxWidth := 0
+		for _, info := range results {
+			l := len(info.Media)
+			if l > maxWidth {
+				maxWidth = l
+			}
+		}
+		for _, pubInfo := range results {
+			fmt.Printf("  [%-*s]  %s\n",
+				maxWidth, pubInfo.Media, pubInfo.Publication)
+		}
+	}
+	return nil
 }
 
 // main processes command line args then retrieve search results from library.
@@ -112,10 +165,10 @@ func main() {
 
 	// Retrieve the publications for the authors in the configuration file
 	// and print the results.
-	// if err := print_search_results(config); !err {
-	//        log.Error(err)
-	//        os.exit(1)
-	// }
+	if err := printSearchResults(config, log); err != nil {
+		log.Error(err)
+		os.Exit(1)
+	}
 
 	os.Exit(0)
 }

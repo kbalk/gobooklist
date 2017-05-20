@@ -1,5 +1,5 @@
 /*
-Contains Configurator and ConfigError classes
+Package booklist provides functions for searching a library's catalog website.
 
 This file contains the functions to read and validate the configuration file.
 The configuration file contains:
