@@ -11,6 +11,9 @@ BINARY  = booklist
 BIN     = $(GOPATH)/bin
 PACKAGES = $(shell go list ./...)
 
+default:
+	go install $(PACKAGES)
+
 ##########################################################################
 # Tools
 #
@@ -75,6 +78,3 @@ install:
 clean:
 	go clean
 	@rm -f $(BIN)/$(BINARY)
-
-default:
-	go install
