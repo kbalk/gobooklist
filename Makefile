@@ -1,4 +1,6 @@
-# $GOPATH should be set; if not, an error will be raised.
+# Makefile for booklist.
+#
+# Note:  $GOPATH should be set; if not, an error will be raised.
 #
 # Borrowed a bit from: https://github.com/vincentbernat/hellogopher/Makefile
 #
@@ -7,15 +9,15 @@ ifndef GOPATH
 $(error GOPATH is not set)
 endif
 
-BINARY  = booklist
-BIN     = $(GOPATH)/bin
+BINARY   = booklist
+BIN      = $(GOPATH)/bin
 PACKAGES = $(shell go list ./...)
 
 default:
 	go install $(PACKAGES)
 
 ##########################################################################
-# Tools
+# Tools -- if not present, retrieve and install them.
 #
 GOLINT = $(BIN)/golint
 $(BIN)/golint: ; $(info building golint ...)
@@ -26,12 +28,8 @@ $(BIN)/errcheck: ; $(info building errcheck ...)
 	go get github.com/kisielk/errcheck
 
 GOCOVMERGE = $(BIN)/gocovmerge
-$(BIN)/gocovmerge: ; $(info building gocovmerg ...e)
+$(BIN)/gocovmerge: ; $(info building gocovmerg ...)
 	go get github.com/wadey/gocovmerge
-
-GOCOV = $(BIN)/gocov
-$(BIN)/gocov: ; $(info building gocov ...)
-	go get github.com/axw/gocov/...
 
 ##########################################################################
 # Code formatting, inspection
@@ -60,8 +58,45 @@ errcheck: $(ERRCHECK) ; $(info running errcheck ...)
 inspect: fmt vet lint errcheck
 
 ##########################################################################
-# Tests
+# Test and code coverage
 #
+TEST_PKGS = $(shell go list -f '{{if .TestGoFiles}}{{.ImportPath}}{{end}}' ./...)
+
+.PHONY: test
+test:
+	go test $(TEST_PKGS)
+
+.PHONY: test-verbose
+test-verbose:
+	go test -v $(TEST_PKGS)
+
+
+COVERAGE_PKGS    = $(shell echo $(TEST_PKGS) | tr ' ' ',')
+COVERAGE_DIR     = coverage
+COVERAGE_PROFILE = $(COVERAGE_DIR)/merged.profile
+COVERAGE_HTML    = $(COVERAGE_DIR)/coverage.html
+
+.PHONY: test-coverage
+test-coverage: $(GOCOVMERGE)
+	@mkdir -p $(COVERAGE_DIR)
+	@go list -f '{{if gt (len .TestGoFiles) 0}}\
+	    go test \\\
+		-test.timeout=120s \\\
+		-covermode count \\\
+		-coverprofile $(COVERAGE_DIR)/{{.Name}}.profile \\\
+		-coverpkg $(COVERAGE_PKGS) \\\
+	        {{.ImportPath}}{{end}}' \
+	    $(TEST_PKGS) | xargs -I {} bash -c {}
+	@echo "creating merged profile ..."
+	@$(GOCOVMERGE) $(COVERAGE_DIR)/*.profile > $(COVERAGE_PROFILE)
+	@echo "printing function coverage ..."
+	@go tool cover -func $(COVERAGE_PROFILE)
+	@echo "creating html file $(COVERAGE_HTML) ..."
+	@go tool cover -html $(COVERAGE_PROFILE) -o $(COVERAGE_HTML)
+
+.PHONY: cleantest
+cleantest:
+	@rm -rf $(COVERAGE_DIR)
 
 ##########################################################################
 # Build, install, clean
@@ -74,7 +109,9 @@ build:
 install:
 	go install $(PACKAGES)
 
-.PHONY: clean
-clean:
+.PHONY: clean cleancode
+clean: cleancode cleantest
+
+cleancode:
 	go clean
 	@rm -f $(BIN)/$(BINARY)
