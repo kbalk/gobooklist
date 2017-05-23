@@ -11,12 +11,12 @@ public website and search for the latest books available from your favorite
 authors.  If your list of favorite authors is long, that's a tedious task
 even with saved searches.
 
-`go_booklist`, can make that task easier by automating the task of
+`booklist`, can make that task easier by automating the task of
 determining whether the library has any new publications for those authors.
 However, this tool will only work with libraries using the CARL.X
 Integrated Library System.
 
-`go_booklist` works by accessing a given library's website to search for
+`booklist` works by accessing a given library's website to search for
 publications from a given author, of a specific media type and within the
 current year.  The results are printed to the console.  The search is
 repeated for each author listed in a configuration file.
@@ -48,7 +48,7 @@ with earlier versions of Go.
 ## Configuration File
 
 The name of the YAML-formatted configuration file is a required argument
-to run `go_booklist`.  The format is as follows:
+to run `booklist`.  The format is as follows:
 
 Tag   | Description
 ------------------|-----------------
@@ -95,7 +95,7 @@ authors:
 ## Usage
 
 ```sh
-Usage: go_booklist [-h] [-d] config_file
+Usage: booklist [-h] [-d] config_file
 
 Search a public library's catalog website for this year's publications
 from authors listed in the given config file.
