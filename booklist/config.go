@@ -42,7 +42,7 @@ The config file is expected to be in YAML format.  The tags are as follows:
 	media-type:
 	    Optional.  See media-type above for the allowed values.
 
-Example YAML config file
+Example YAML config file:
 
     catalog-url: https://catalog.library.loudoun.gov/
     media-type: Book

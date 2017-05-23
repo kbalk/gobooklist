@@ -1,40 +1,41 @@
-// Main package for booklist; lists author publications in current year.
-//
-// Automates the search of a public library website to retrieve publications
-// for a configured list of authors.
-//
-// Takes a YAML file with the library's catalog URL and list of authors as
-// input.  Issues the appropriate requests to that library's website for the
-// latest publications for those authors.  Only works for libraries using
-// the CARL.X Integrated Library System (ILS).
-//
-// The CARL.X ILS is based on Web 2.0 technologies so its possible to issue
-// the POST requests needed to obtain the number of expected publications
-// and the list of those publications.  It has an "open" API, but that API
-// appears to be open only to paying customers, i.e., the library staff.
-//
-// A request URL to search for a given book consists of an array of
-// facetFilters.  You can filter on format (media type), publication year,
-// new titles, etc.  The 'New Titles' filter permits final granularity in
-// time, e.g., weeks or months.  However, if you go to a library website
-// using CARL.X and manually select a format filter, the 'New Titles' filter
-// is no longer selectable.  It's not clear why that is so, but a 'Publication
-// Year' filter is still permitted.
-//
-// This tool defaults to a search within a publication year and that year is
-// the current one.  Media with an unknown publication time period will also
-// be returned from a search as they are future releases that might be
-// available in the current year.
-//
-// Usage: go_booklist [-h] [-d] config_file
-//     Search a public library's catalog website for this year's publications
-//     from authors listed in the given config file.
-//
-//     positional arguments:
-//       config_file  Config file containing catalog url and list of authors
-//     optional arguments:
-//       -h, --help   show this help message and exit
-//       -d, --debug  Print debug information to stderr
+/* Main package for booklist; lists author publications in current year.
+
+Automates the search of a public library website to retrieve publications
+for a configured list of authors.
+
+Takes a YAML file with the library's catalog URL and list of authors as
+input.  Issues the appropriate requests to that library's website for the
+latest publications for those authors.  Only works for libraries using
+the CARL.X Integrated Library System (ILS).
+
+The CARL.X ILS is based on Web 2.0 technologies so its possible to issue
+the POST requests needed to obtain the number of expected publications
+and the list of those publications.  It has an "open" API, but that API
+appears to be open only to paying customers, i.e., the library staff.
+
+A request URL to search for a given book consists of an array of
+facetFilters.  You can filter on format (media type), publication year,
+new titles, etc.  The 'New Titles' filter permits finer granularity in
+time, e.g., weeks or months.  However, if you go to a library website
+using CARL.X and manually select a format filter, the 'New Titles' filter
+is no longer selectable.  It's not clear why that is so, but a 'Publication
+Year' filter is still permitted.
+
+This tool defaults to a search within a publication year and that year is
+the current one.  Media with an unknown publication time period will also
+be returned from a search as they are future releases that might be
+available in the current year.
+
+Usage: booklist [-h] [-d] config_file
+    Search a public library's catalog website for this year's publications
+    from authors listed in the given config file.
+
+    positional arguments:
+      config_file  Config file containing catalog url and list of authors
+    optional arguments:
+      -h, --help   show this help message and exit
+      -d, --debug  Print debug information to stderr
+*/
 package main
 
 import (
