@@ -48,7 +48,7 @@ import (
 )
 
 // initLogging initializes the format and debug level for the stderr logging.
-func initLogging(debug bool) {
+func initLogging(log *logging.Logger, debug bool) {
 	stderrLog := logging.NewLogBackend(os.Stderr, "", 0)
 
 	format := logging.MustStringFormatter(
@@ -62,7 +62,7 @@ func initLogging(debug bool) {
 	}
 	logLevel.SetLevel(level, "")
 
-	logging.SetBackend(logLevel)
+	log.SetBackend(logLevel)
 }
 
 // Retrieve and print the author publications for current year.
@@ -147,7 +147,7 @@ func main() {
 
 	// Initialize logging for error and/or debug messages to stderr.
 	var log = logging.MustGetLogger("booklist")
-	initLogging(*debugFlag)
+	initLogging(log, *debugFlag)
 
 	// Verify the config exists and is readable, then read the contents.
 	configBytes, ok := booklist.ReadConfig(configFileName)

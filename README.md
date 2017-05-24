@@ -11,7 +11,7 @@ public website and search for the latest books available from your favorite
 authors.  If your list of favorite authors is long, that's a tedious task
 even with saved searches.
 
-`booklist`, can make that task easier by automating the task of
+`booklist` can make that task easier by automating the task of
 determining whether the library has any new publications for those authors.
 However, this tool will only work with libraries using the CARL.X
 Integrated Library System.

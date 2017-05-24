@@ -51,6 +51,9 @@ type CatalogInfo struct {
 	Log    *logging.Logger
 }
 
+// facetFilter represents a map of filters used as POST JSON data.
+type facetFilter map[string]string
+
 // searchFilter is the collection of JSON data provided in a POST request.
 type searchFilter struct {
 	AddToHistory   bool          `json:"addToHistory"`
@@ -62,9 +65,6 @@ type searchFilter struct {
 	FacetFilters   []facetFilter `json:"facetFilters"`
 	SearchTerm     string        `json:"searchTerm"`
 }
-
-// facetFilter represents a map of filters used as POST JSON data.
-type facetFilter map[string]string
 
 // resourceInfo represents the map of resources returned in POST response.
 type resourceInfo map[string]interface{}

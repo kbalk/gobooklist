@@ -169,6 +169,9 @@ func ReadConfig(configFileName string) ([]byte, error) {
 	if os.IsNotExist(err) {
 		return nil, err
 	}
+        if err != nil {
+                return nil, err
+        }
 
 	if fileInfo.IsDir() {
 		return nil, fmt.Errorf("%s is a directory; must be a file",
