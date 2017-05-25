@@ -34,7 +34,7 @@ To install the latest release from github:
 go get github.com/kbalk/go_booklist
 ```
 
-After installation, modify the default configuration file `sample_config.yaml`,
+After installation, modify the default configuration file `sample_config.yml`,
 which is found in the same directory as this README.  In particular, the
 catlog-url and author list should be edited to specify the appropriate
 library and authors of interest.  Refer to the
@@ -109,7 +109,7 @@ optional arguments:
   -d, --debug  Print debug information to stdout
 ```
 
-A sample configuration file named `sample_config.yaml` has been provided with
+A sample configuration file named `sample_config.yml` has been provided with
 the distribution.  The format of the configuration file is described
 [here](#configuration-file).
 
