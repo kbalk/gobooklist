@@ -274,13 +274,15 @@ func (c CatalogInfo) issueRequest(endpt string, filters []facetFilter, target in
 	}
 	resp, err := client.Do(req)
 	if err != nil || resp == nil || resp.StatusCode != http.StatusOK {
+		var errmsg error
 		if err != nil {
-			return fmt.Errorf("POST request '%s' failed; %s", u, err)
+			errmsg = fmt.Errorf("POST request '%s' failed; %s", u, err)
 		} else {
-			return fmt.Errorf("POST request '%s' failed; "+
+			errmsg = fmt.Errorf("POST request '%s' failed; "+
 				"HTTP error: %s",
 				u, http.StatusText(resp.StatusCode))
 		}
+		return errmsg
 	}
 	defer resp.Body.Close()
 

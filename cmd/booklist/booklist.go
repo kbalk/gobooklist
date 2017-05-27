@@ -1,4 +1,5 @@
-/* Main package for booklist; lists author publications in current year.
+/*
+Main package for booklist; lists author publications in current year.
 
 Automates the search of a public library website to retrieve publications
 for a configured list of authors.

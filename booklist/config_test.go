@@ -218,7 +218,7 @@ func TestInvalidURLs(t *testing.T) {
 }
 
 func TestURLWithoutTrailingSlash(t *testing.T) {
-        t.Log("Test URL with missing trailing slash")
+	t.Log("Test URL with missing trailing slash")
 	const configString = `
         catalog-url: https://junk.com
         media-type: book
@@ -231,10 +231,10 @@ func TestURLWithoutTrailingSlash(t *testing.T) {
 		t.Errorf("Schema validation of config file should " +
 			"not fail due to missing trailing slash is URL.")
 	}
-        if !strings.HasSuffix(config.URL, "/") {
-                t.Errorf("Trailing slash not ended to end of URL; expected "+
-                        "%s, got %s", config.URL, config.URL + "/")
-        }
+	if !strings.HasSuffix(config.URL, "/") {
+		t.Errorf("Trailing slash not ended to end of URL; expected "+
+			"%s, got %s", config.URL, config.URL+"/")
+	}
 }
 
 func TestBadMediaType(t *testing.T) {
