@@ -33,8 +33,8 @@ var (
 	// microsecond precision an increment is used.
 	timestampIncrement int64 = 1
 
-	// Current year as a string; used in filtering.
-	yearFilter = time.Now().UTC().Format("2006")
+	// CurrentYear is current year as a string; used in filtering.
+	CurrentYear = time.Now().UTC().Format("2006")
 )
 
 // PublicationInfo provides the name and media type for a given publication.
@@ -48,6 +48,7 @@ type CatalogInfo struct {
 	URL    string
 	Author string
 	Media  string
+	Year   string
 	Log    *logging.Logger
 }
 
@@ -84,16 +85,24 @@ type resourceInfo map[string]interface{}
 // title for all publications in the current year or of an unknown year.
 //
 func (c CatalogInfo) PublicationSearch() ([]PublicationInfo, error) {
-	if c.Author == "" || c.Media == "" {
-		return nil, fmt.Errorf("arguments must be non-null:  "+
-			"author=%s, media=%s'", c.Author, c.Media)
+	if c.URL == "" || c.Author == "" || c.Media == "" || c.Year == "" {
+		return nil, fmt.Errorf("catalog information must be "+
+			"non-null:  url=%s, author=%s, media=%s, year=%s",
+			c.URL, c.Author, c.Media, c.Year)
+	}
+
+	// If the search year is the current year, the search should
+	// include a publication date of "unknown" as well.
+	var years = []string{c.Year}
+	if c.Year == CurrentYear {
+		years = append(years, "unknown")
 	}
 
 	// Perform two sets of requests - one for publications within the
 	// current year and one for publications of an unknown year.
 	var filteredPubs []PublicationInfo
 	var filters []facetFilter
-	for _, year := range []string{"unknown", yearFilter} {
+	for _, year := range years {
 		filters = []facetFilter{
 			facetFilter{
 				"facetDisplay": year,
@@ -274,15 +283,15 @@ func (c CatalogInfo) issueRequest(endpt string, filters []facetFilter, target in
 	}
 	resp, err := client.Do(req)
 	if err != nil || resp == nil || resp.StatusCode != http.StatusOK {
-		var errmsg error
+		var newErr error
 		if err != nil {
-			errmsg = fmt.Errorf("POST request '%s' failed; %s", u, err)
+			newErr = fmt.Errorf("POST request '%s' failed; %s", u, err)
 		} else {
-			errmsg = fmt.Errorf("POST request '%s' failed; "+
+			newErr = fmt.Errorf("POST request '%s' failed; "+
 				"HTTP error: %s",
 				u, http.StatusText(resp.StatusCode))
 		}
-		return errmsg
+		return newErr
 	}
 	defer resp.Body.Close()
 

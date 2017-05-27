@@ -89,6 +89,7 @@ func printSearchResults(config booklist.Config, log *logging.Logger) error {
 			URL:    config.URL,
 			Author: authorName,
 			Media:  media,
+			Year:   booklist.CurrentYear,
 			Log:    log,
 		}
 		results, err := c.PublicationSearch()

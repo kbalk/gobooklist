@@ -70,7 +70,6 @@ test:
 test-verbose:
 	go test -v $(TEST_PKGS)
 
-
 COVERAGE_PKGS    = $(shell echo $(TEST_PKGS) | tr ' ' ',')
 COVERAGE_DIR     = coverage
 COVERAGE_PROFILE = $(COVERAGE_DIR)/merged.profile
@@ -111,7 +110,6 @@ install:
 
 .PHONY: clean cleancode
 clean: cleancode cleantest
-
 cleancode:
 	go clean
 	@rm -f $(BIN)/$(BINARY)
