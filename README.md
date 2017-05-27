@@ -101,12 +101,12 @@ Search a public library's catalog website for this year's publications
 from authors listed in the given config file.
 
 positional arguments:
-  config_file  Config file containing library's catalog url and
+  config_file  YAML formatted file containing library's catalog url and
                list of authors
 
 optional arguments:
-  -h, --help   show this help message and exit
-  -d, --debug  Print debug information to stdout
+  -h  show this help message and exit
+  -d  Print debug information to stdout
 ```
 
 A sample configuration file named `sample_config.yml` has been provided with

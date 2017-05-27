@@ -273,15 +273,20 @@ func (c CatalogInfo) issueRequest(endpt string, filters []facetFilter, target in
 		Timeout: time.Second * 10,
 	}
 	resp, err := client.Do(req)
-	if err != nil || resp.StatusCode != http.StatusOK {
-		return fmt.Errorf("POST request [%s] failed; %d, %s",
-			u, resp.StatusCode, err)
+	if err != nil || resp == nil || resp.StatusCode != http.StatusOK {
+		if err != nil {
+			return fmt.Errorf("POST request '%s' failed; %s", u, err)
+		} else {
+			return fmt.Errorf("POST request '%s' failed; "+
+				"HTTP error: %s",
+				u, http.StatusText(resp.StatusCode))
+		}
 	}
 	defer resp.Body.Close()
 
 	err = json.NewDecoder(resp.Body).Decode(target)
 	if err != nil {
-		return fmt.Errorf("unable to decode response to [%s]: "+
+		return fmt.Errorf("unable to decode response to '%s': "+
 			"response %#v, error: %s", c.URL, resp, err)
 	}
 	return nil

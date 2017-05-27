@@ -169,9 +169,9 @@ func ReadConfig(configFileName string) ([]byte, error) {
 	if os.IsNotExist(err) {
 		return nil, err
 	}
-        if err != nil {
-                return nil, err
-        }
+	if err != nil {
+		return nil, err
+	}
 
 	if fileInfo.IsDir() {
 		return nil, fmt.Errorf("%s is a directory; must be a file",
@@ -226,6 +226,11 @@ func ValidateConfig(in []byte) (Config, error) {
 	// Transform the media types in the Config struct to values needed
 	// for the URL request.
 	convertMediaType(&config)
+
+	// Ensure the URL ends with a trailing backslash.
+	if !strings.HasSuffix(config.URL, "/") {
+		config.URL += "/"
+	}
 
 	return config, err
 }

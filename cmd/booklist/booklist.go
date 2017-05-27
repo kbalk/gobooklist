@@ -126,12 +126,16 @@ func main() {
   Search a public library's catalog website for this year's publications
   from authors listed in the given config file.
 
-  config_file
-        Config file with library's catalog url and list of authors`
+  config_file    YAML-formatted file containing library's catalog url and
+                 list of authors
+
+  Optional arguments:
+
+  -h    Show this help message and exit`
 		fmt.Fprintln(os.Stderr, usageText)
 		flag.PrintDefaults()
 	}
-	var debugFlag = flag.Bool("debug", false,
+	var debugFlag = flag.Bool("d", false,
 		"Print debug information to stderr")
 	flag.Parse()
 
