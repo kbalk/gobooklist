@@ -1,5 +1,5 @@
 /*
-Contains Configurator and ConfigError classes
+Package booklist provides functions for searching a library's catalog website.
 
 This file contains the functions to read and validate the configuration file.
 The configuration file contains:
@@ -42,7 +42,7 @@ The config file is expected to be in YAML format.  The tags are as follows:
 	media-type:
 	    Optional.  See media-type above for the allowed values.
 
-Example YAML config file
+Example YAML config file:
 
     catalog-url: https://catalog.library.loudoun.gov/
     media-type: Book
@@ -169,6 +169,9 @@ func ReadConfig(configFileName string) ([]byte, error) {
 	if os.IsNotExist(err) {
 		return nil, err
 	}
+	if err != nil {
+		return nil, err
+	}
 
 	if fileInfo.IsDir() {
 		return nil, fmt.Errorf("%s is a directory; must be a file",
@@ -221,8 +224,13 @@ func ValidateConfig(in []byte) (Config, error) {
 	}
 
 	// Transform the media types in the Config struct to values needed
-        // for the URL request.
+	// for the URL request.
 	convertMediaType(&config)
+
+	// Ensure the URL ends with a trailing backslash.
+	if !strings.HasSuffix(config.URL, "/") {
+		config.URL += "/"
+	}
 
 	return config, err
 }

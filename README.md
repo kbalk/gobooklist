@@ -12,12 +12,12 @@ public website and search for the latest books available from your favorite
 authors.  If your list of favorite authors is long, that's a tedious task
 even with saved searches.
 
-`go_booklist`, can make that task easier by automating the task of
+`booklist` can make that task easier by automating the task of
 determining whether the library has any new publications for those authors.
 However, this tool will only work with libraries using the CARL.X
 Integrated Library System.
 
-`go_booklist` works by accessing a given library's website to search for
+`booklist` works by accessing a given library's website to search for
 publications from a given author, of a specific media type and within the
 current year.  The results are printed to the console.  The search is
 repeated for each author listed in a configuration file.
@@ -35,7 +35,7 @@ To install the latest release from github:
 go get github.com/kbalk/go_booklist
 ```
 
-After installation, modify the default configuration file `sample_config`,
+After installation, modify the default configuration file `sample_config.yml`,
 which is found in the same directory as this README.  In particular, the
 catlog-url and author list should be edited to specify the appropriate
 library and authors of interest.  Refer to the
@@ -49,7 +49,7 @@ with earlier versions of Go.
 ## Configuration File
 
 The name of the YAML-formatted configuration file is a required argument
-to run `go_booklist`.  The format is as follows:
+to run `booklist`.  The format is as follows:
 
 Tag   | Description
 ------------------|-----------------
@@ -82,35 +82,35 @@ Also, some media types are supersets, i.e., a type of 'book' includes
 Example configuration file:
 
 ```YAML
-	catalog-url: http://catalog.library.loudoun.gov/
-	media-type: Book
-	authors:
-		- firstname: James
-		  lastname: Patterson
-		  media-type: book on cd
+catalog-url: http://catalog.library.loudoun.gov/
+media-type: Book
+authors:
+   - firstname: James
+     lastname: Patterson
+     media-type: book on cd
 
-		- firstname: Alexander
-	 	  lastname: McCall Smith
+   - firstname: Alexander
+     lastname: McCall Smith
 ```
 
 ## Usage
 
 ```sh
-Usage: go_booklist [-h] [-d] config_file
+Usage: booklist [-h] [-d] config_file
 
 Search a public library's catalog website for this year's publications
 from authors listed in the given config file.
 
 positional arguments:
-  config_file  Config file containing library's catalog url and
+  config_file  YAML formatted file containing library's catalog url and
                list of authors
 
 optional arguments:
-  -h, --help   show this help message and exit
-  -d, --debug  Print debug information to stdout
+  -h  show this help message and exit
+  -d  Print debug information to stdout
 ```
 
-A sample configuration file named `sample_config` has been provided with
+A sample configuration file named `sample_config.yml` has been provided with
 the distribution.  The format of the configuration file is described
 [here](#configuration-file).
 

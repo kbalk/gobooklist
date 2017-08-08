@@ -1,5 +1,5 @@
 # ===================================================================
-# Sample configuration file for the 'booklist' script.
+# Sample configuration file for 'booklist'.
 #
 # The configuration file is expected to be in YAML format, which
 # consists of tags followed by values.  For lists, such as the one
