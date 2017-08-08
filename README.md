@@ -1,5 +1,6 @@
 
-*WARNING -- this is a work in progress; the code is not complete*
+*NOTE -- the code is working, but further tests need to be written and
+the code may change as a result.*
 
 # booklist
 
